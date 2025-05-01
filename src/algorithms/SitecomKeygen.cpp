@@ -7,17 +7,17 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Router Keygen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Router Keygen.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "SitecomKeygen.h"
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 
 SitecomKeygen::SitecomKeygen(QString ssid, QString mac) :
@@ -29,7 +29,7 @@ const QString SitecomKeygen::CHARSET = "123456789abcdefghjkmnpqrstuvwxyzABCDEFGH
 
 void SitecomKeygen::generateKey(QString mac) {
     QString key = "";
-    int numericMac = mac.mid(6).split(QRegExp("[A-Fa-f]")).at(0).toInt();
+    int numericMac = mac.mid(6).split(QRegularExpression("[A-Fa-f]")).at(0).toInt();
     key += CHARSET.at(((numericMac + mac.at(11).unicode() + mac.at(5).unicode()) * (mac
           .at(9).unicode() + mac.at(3).unicode() + mac.at(11).unicode())) % CHARSET.length());
     key += CHARSET.at(((numericMac + mac.at(11).unicode() + mac.at(6).unicode()) * (mac

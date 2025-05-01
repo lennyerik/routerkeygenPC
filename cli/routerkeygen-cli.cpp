@@ -1,5 +1,6 @@
 #include <typeinfo>
 #include <QString>
+#include <QRegularExpression>
 #include <QVector>
 #include <iostream>
 
@@ -25,7 +26,7 @@ int main(int argc, char * argv[]) {
     if ( options.contains("s") || options.contains("m") ) {
         WirelessMatcher m;
         QString mac = options.value("m", "").toString().toUpper();
-        if ( mac.length()>0 && mac.count(QRegExp("^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$")) == 0 ) {
+        if ( mac.length()>0 && mac.count(QRegularExpression("^([0-9A-F]{2}[:-]){5}([0-9A-F]{2})$")) == 0 ) {
             mac = "";
             if ( !options.value("q", false).toBool() )
                 std::cout << QObject::tr("Invalid MAC. It will not be used.").toUtf8().data() << std::endl;

@@ -7,17 +7,17 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Router Keygen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Router Keygen.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "HuaweiKeygen.h"
-#include <QRegExp>
+#include <QRegularExpression>
 
 HuaweiKeygen::HuaweiKeygen(QString ssid, QString mac) :
 		Keygen(ssid, mac) {
@@ -26,7 +26,7 @@ HuaweiKeygen::HuaweiKeygen(QString ssid, QString mac) :
 
 
 int HuaweiKeygen::getSupportState() const{
-    if ( getSsidName().count(QRegExp("^INFINITUM[0-9a-zA-Z]{4}$")) == 1 )
+    if ( getSsidName().count(QRegularExpression("^INFINITUM[0-9a-zA-Z]{4}$")) == 1 )
         return SUPPORTED;
     return UNLIKELY;
 }

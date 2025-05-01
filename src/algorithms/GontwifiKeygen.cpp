@@ -27,7 +27,7 @@ GontwifiKeygen::GontwifiKeygen(QString ssid, QString mac) :
 QVector<QString> & GontwifiKeygen::getKeys(){
 	QString mac = getMacAddress();
 
-    results.append("000000" + mac[9] + mac[8] + mac[7] + mac[6]);
+    results.append(QString("000000") + mac[9] + mac[8] + mac[7] + mac[6]);
 
     return results;
 }

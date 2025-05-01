@@ -20,7 +20,7 @@
  */
 
 #include "Upc07Keygen.h"
-#include <QRegExp>
+#include <QRegularExpression>
 #include <stdio.h>
 #include <openssl/md5.h>
 
@@ -30,7 +30,7 @@ Upc07Keygen::Upc07Keygen(QString ssid, QString mac) :
 }
 
 int Upc07Keygen::getSupportState() const{
-    if ( getSsidName().contains(QRegExp("^UPC[0-9]{7}$")) )
+    if ( getSsidName().contains(QRegularExpression("^UPC[0-9]{7}$")) )
         return SUPPORTED;
     return UNLIKELY;
 }
@@ -66,9 +66,9 @@ QString Upc07Keygen::hash2pass(quint8 *in_hash) {
 		if (a >= 'L') a++;
 		if (a >= 'O') a++;
 
-		pass += a;
+		pass += QString::number(a);
 	}
-	
+
 	return pass;
 }
 
@@ -105,7 +105,7 @@ QVector<QString> & Upc07Keygen::getKeys() {
     target = ssid7.toInt(&ok, 10);
     if (!ok)
         throw ERROR;
-        
+
     const unsigned int prefix_cnt = sizeof(prefixes) / sizeof(prefixes[0]);
 
     MD5_CTX ctx;
@@ -163,5 +163,5 @@ QVector<QString> & Upc07Keygen::getKeys() {
         }
     }
 
-    return results;   
+    return results;
 }

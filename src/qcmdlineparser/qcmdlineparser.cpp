@@ -1,6 +1,5 @@
 
 #include "qcmdlineparser.h"
-#include <QLinkedList>
 #include <QMap>
 #include <QDebug>
 #include <QTextStream>
@@ -22,7 +21,7 @@ public:
     bool m_helpEnabled;
     QMap<QString, int> m_optionalArgIndex;
     QList<QCmdLineArgument> m_optionalArgs;
-    QLinkedList<QCmdLineArgument> m_positionalArg;
+    QList<QCmdLineArgument> m_positionalArg;
 
     int checkOptimalArg(const QCmdLineArgument *arg, QVariantMap &result, QString *error, const QStringList &args, int i, int j = -1);
     QString usage(const QString &applicationName) const;
@@ -263,7 +262,7 @@ QString QCmdLineParser::QCmdLineParserPrivate::usage(const QString& applicationN
 
 static int _accumulateStringSize(int v, const QString& elem)
 {
-    return v + elem.count();
+    return v + elem.length();
 }
 
 QString QCmdLineParser::help() const
@@ -314,4 +313,3 @@ QString QCmdLineParser::help() const
     }
     return help;
 }
-

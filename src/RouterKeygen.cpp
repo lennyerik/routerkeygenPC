@@ -7,12 +7,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Router Keygen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Router Keygen.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -117,11 +117,11 @@ RouterKeygen::RouterKeygen(QWidget *parent) :
     trayIcon->setIcon(QIcon(":/tray_icon.png"));
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
-    
+
     //Set widget ration
     ui->splitterVertical->setStretchFactor(0, 3);
     ui->splitterVertical->setStretchFactor(1, 2);
-    
+
     settings = new QSettings("Exobel", "RouterKeygen");
     bool forceRefresh = settings->value(FORCE_REFRESH, false).toBool();
     wifiManager->setForceScan(forceRefresh);
@@ -309,7 +309,7 @@ RouterKeygen::~RouterKeygen() {
 }
 void RouterKeygen::manualCalculation() {
     QString mac = ui->macInput->text();
-    if ( mac.length()>0 && mac.count(QRegExp("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")) == 0 ) {
+    if ( mac.length()>0 && mac.count(QRegularExpression("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$")) == 0 ) {
         mac = "";
         ui->statusBar->showMessage(tr("Invalid MAC. It will not be used."));
     }

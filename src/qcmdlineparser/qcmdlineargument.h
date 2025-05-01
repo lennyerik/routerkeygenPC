@@ -27,7 +27,7 @@ public:
     QString keyName() const;
     QString valueName() const;
     Action action() const;
-    void setValidator(const QRegExp &validator);
+    void setValidator(const QRegularExpression &validator);
     bool validate(const QString &value) const;
 
     void setRequired(bool required);

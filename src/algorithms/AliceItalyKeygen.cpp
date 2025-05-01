@@ -7,18 +7,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Router Keygen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Router Keygen.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "AliceItalyKeygen.h"
 #include "config/AliceMagicInfo.h"
-#include <openssl/sha.h>
+#include <openssl/evp.h>
 AliceItalyKeygen::AliceItalyKeygen(QString ssid, QString mac,
 		QVector<AliceMagicInfo *> * supported) :
 		Keygen(ssid, mac), supportedAlice(supported) {
@@ -36,7 +36,8 @@ QVector<QString> & AliceItalyKeygen::getKeys() {
 
 	if (supportedAlice->isEmpty())
         throw ERROR;
-    SHA256_CTX sha;
+    EVP_MD_CTX *evp = EVP_MD_CTX_new();
+    if (!evp) throw ERROR;
     unsigned char hash[32];
 
 	bool status;
@@ -64,11 +65,11 @@ QVector<QString> & AliceItalyKeygen::getKeys() {
 						+ macS.mid(i + 1, 1).toInt(&status, 16);
 
 			/* Compute the hash */
-            SHA256_Init(&sha);
-            SHA256_Update(&sha, (const void *) ALICE_SEED, sizeof(ALICE_SEED));
-            SHA256_Update(&sha, (const void *) serialStr.toLatin1().data(), serialStr.size());
-            SHA256_Update(&sha, (const void *) mac, sizeof(mac));
-            SHA256_Final(hash, &sha);
+            EVP_DigestInit_ex(evp, EVP_sha256(), nullptr);
+            EVP_DigestUpdate(evp, (const void *) ALICE_SEED, sizeof(ALICE_SEED));
+            EVP_DigestUpdate(evp, (const void *) serialStr.toLatin1().data(), serialStr.size());
+            EVP_DigestUpdate(evp, (const void *) mac, sizeof(mac));
+            EVP_DigestFinal_ex(evp, hash, nullptr);
 
 			for (int i = 0; i < 24; ++i) {
 				key += preInitCharset.at(hash[i] & 0xFF);
@@ -98,11 +99,11 @@ QVector<QString> & AliceItalyKeygen::getKeys() {
 			mac[i / 2] = (macEth.mid(i, 1).toInt(&status, 16) << 4)
 					+ macEth.mid(i + 1, 1).toInt(&status, 16);
 		/* Compute the hash */
-        SHA256_Init(&sha);
-        SHA256_Update(&sha, (const void *) ALICE_SEED, sizeof(ALICE_SEED));
-        SHA256_Update(&sha, (const void *) serialStr.toLatin1().data(), serialStr.size());
-        SHA256_Update(&sha, (const void *) mac, sizeof(mac));
-        SHA256_Final(hash, &sha);
+        EVP_DigestInit_ex(evp, EVP_sha256(), nullptr);
+        EVP_DigestUpdate(evp, (const void *) ALICE_SEED, sizeof(ALICE_SEED));
+        EVP_DigestUpdate(evp, (const void *) serialStr.toLatin1().data(), serialStr.size());
+        EVP_DigestUpdate(evp, (const void *) mac, sizeof(mac));
+        EVP_DigestFinal_ex(evp, hash, nullptr);
 
 		key = "";
 		for (int i = 0; i < 24; ++i)

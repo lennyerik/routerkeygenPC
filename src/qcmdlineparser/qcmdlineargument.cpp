@@ -1,6 +1,6 @@
 #include "qcmdlineargument.h"
 #include <QDebug>
-#include <QRegExp>
+#include <QRegularExpression>
 
 class QCmdLineArgument::QCmdLineOptionPrivate
 {
@@ -15,7 +15,7 @@ public:
     QString valueName;
     QString help;
     QCmdLineArgument::Action action;
-    QRegExp validator;
+    QRegularExpression validator;
     bool isRequired;
 };
 
@@ -86,20 +86,21 @@ QCmdLineArgument::Action QCmdLineArgument::action() const
     return m_d->action;
 }
 
-void QCmdLineArgument::setValidator(const QRegExp &validator)
+void QCmdLineArgument::setValidator(const QRegularExpression &validator)
 {
     m_d->validator = validator;
 }
 
 bool QCmdLineArgument::validate(const QString &value) const
 {
-    if (m_d->validator.isEmpty())
+    if (m_d->validator.pattern().isEmpty())
         return true;
 #ifndef NDEBUG
     if (!m_d->validator.isValid())
         qWarning() << "Invalid regex used to validate argument" << name();
 #endif
-    return m_d->validator.exactMatch(value);
+    QRegularExpression exactValidator("\\A" + m_d->validator.pattern() + "\\z");
+    return exactValidator.match(value).hasMatch();
 }
 
 void QCmdLineArgument::setRequired(bool required)
@@ -121,4 +122,3 @@ QString QCmdLineArgument::help() const
 {
     return m_d->help;
 }
-

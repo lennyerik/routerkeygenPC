@@ -18,6 +18,8 @@ HEADERS += ../src/algorithms/*.h \
     ../src/qcmdlineparser/qcmdlineparser.h
 
 INCLUDEPATH += ../src/
-LIBS += -lcrypto
+
+CONFIG += link_pkgconfig
+PKGCONFIG += openssl
 
 RESOURCES += ../resources/resources.qrc

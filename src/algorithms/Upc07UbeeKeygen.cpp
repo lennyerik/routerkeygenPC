@@ -20,7 +20,7 @@
  */
 
 #include "Upc07UbeeKeygen.h"
-#include <QRegExp>
+#include <QRegularExpression>
 #include <stdio.h>
 #include <openssl/md5.h>
 
@@ -30,7 +30,7 @@ Upc07UbeeKeygen::Upc07UbeeKeygen(QString ssid, QString mac) :
 }
 
 int Upc07UbeeKeygen::getSupportState() const{
-    if ( getSsidName().contains(QRegExp("^UPC[0-9]{7}$")) )
+    if ( getSsidName().contains(QRegularExpression("^UPC[0-9]{7}$")) )
         return SUPPORTED;
     return UNLIKELY;
 }
@@ -274,7 +274,7 @@ QVector<QString> & Upc07UbeeKeygen::getKeys() {
             throw ERROR;
 
     QString ssid = getSsidName();
-    if (ssid.count(QRegExp("^UPC[0-9]{7}$")) == 1) {
+    if (ssid.count(QRegularExpression("^UPC[0-9]{7}$")) == 1) {
         singleSearch = true;
     }
 
@@ -294,11 +294,11 @@ QVector<QString> & Upc07UbeeKeygen::getKeys() {
             ubee_generate_ssid(newMac, rawssid, NULL);
             if (strncmp(bssid.data(), (char*)&rawssid, 10) != 0) {
                 continue;
-            } 
+            }
         }
         ubee_generate_pass(newMac, rawpass, NULL);
         results.append((char*) &rawpass);
     }
 
-    return results;   
+    return results;
 }

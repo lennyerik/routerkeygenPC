@@ -6,7 +6,7 @@
  */
 
 #include "BelkinKeygen.h"
-#include <QRegExp>
+#include <QRegularExpression>
 
 BelkinKeygen::BelkinKeygen(QString ssid, QString mac) :
 		Keygen(ssid, mac) {
@@ -14,7 +14,7 @@ BelkinKeygen::BelkinKeygen(QString ssid, QString mac) :
 }
 
 int BelkinKeygen::getSupportState() const{
-    if ( getSsidName().count(QRegExp("^(B|b)elkin(\\.|_)[0-9a-fA-F]{3,6}$")) == 1 )
+    if ( getSsidName().count(QRegularExpression("^(B|b)elkin(\\.|_)[0-9a-fA-F]{3,6}$")) == 1 )
         return SUPPORTED;
     return UNLIKELY;
 }

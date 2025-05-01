@@ -6,3 +6,6 @@ mac
 lang/*.qrc
 lang/*.qm
 build-test-*
+**/.qmake.stash
+**/*.o
+**/*.app
