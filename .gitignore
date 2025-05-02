@@ -6,6 +6,9 @@ mac
 lang/*.qrc
 lang/*.qm
 build-test-*
+cli/Makefile
+cli/qrc_resources.cpp
+cli/routerkeygen-cli
 **/.qmake.stash
 **/*.o
 **/*.app
