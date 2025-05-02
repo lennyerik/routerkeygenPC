@@ -7,18 +7,18 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Router Keygen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Router Keygen.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "ArnetPirelliKeygen.h"
 #include "AliceItalyKeygen.h"
-#include <openssl/sha.h>
+#include <openssl/evp.h>
 ArnetPirelliKeygen::ArnetPirelliKeygen(QString ssid, QString mac) :
         Keygen(ssid, mac) {
     kgname = "ArnetPirelli";
@@ -41,7 +41,8 @@ QString ArnetPirelliKeygen::incrementMac(QString mac, int increment) {
 }
 
 QString ArnetPirelliKeygen::generateKey(QString mac, int length) {
-    SHA256_CTX sha;
+    EVP_MD_CTX *evp = EVP_MD_CTX_new();
+    if (!evp) throw ERROR;
     unsigned char hash[32];
 
     char macBytes[6];
@@ -51,17 +52,18 @@ QString ArnetPirelliKeygen::generateKey(QString mac, int length) {
     }
 
     /* Compute the hash */
-    SHA256_Init(&sha);
-    SHA256_Update(&sha, (const void *) AliceItalyKeygen::ALICE_SEED, sizeof(AliceItalyKeygen::ALICE_SEED));
-    SHA256_Update(&sha, (const void *) SEED.toLatin1().data(), SEED.size());
-    SHA256_Update(&sha, (const void *) macBytes, sizeof(macBytes));
-    SHA256_Final(hash, &sha);
+    EVP_DigestInit_ex(evp, EVP_sha256(), nullptr);
+    EVP_DigestUpdate(evp, (const void *) AliceItalyKeygen::ALICE_SEED, sizeof(AliceItalyKeygen::ALICE_SEED));
+    EVP_DigestUpdate(evp, (const void *) SEED.toLatin1().data(), SEED.size());
+    EVP_DigestUpdate(evp, (const void *) macBytes, sizeof(macBytes));
+    EVP_DigestFinal_ex(evp, hash, nullptr);
+    EVP_MD_CTX_free(evp);
     QString key = "";
     for (int i = 0; i < length; ++i) {
         key += LOOKUP.at(hash[i] % LOOKUP.length());
     }
     return key;
-    
+
 
 }
 

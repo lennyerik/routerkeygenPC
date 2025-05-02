@@ -7,12 +7,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Router Keygen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Router Keygen.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,7 @@
 #include <stdio.h>
 
 
-#include <openssl/sha.h>
+#include <openssl/evp.h>
 #include <cstdlib>
 #include <stdint.h>
 #include <QFile>
@@ -45,7 +45,8 @@ public:
 
 	void run() {
 		uint8_t message_digest[20];
-		SHA_CTX sha1;
+		EVP_MD_CTX *evp = EVP_MD_CTX_new();
+        if (!evp) throw Keygen::ERROR;
 		int year = 4;
 		int week = 1;
 		char input[13];
@@ -54,7 +55,7 @@ public:
 		input[0] = 'C';
 		input[1] = 'P';
 		for (; i < final; ++i) {
-			sprintf(input + 6, "%02X%02X%02X", (int) dic[i][0], (int) dic[i][1],
+			snprintf(input + 6, sizeof(input) - 6, "%02X%02X%02X", (int) dic[i][0], (int) dic[i][1],
 					(int) dic[i][2]);
 			for (year = 4; year <= 12; ++year) {
 				for (week = 1; week <= 52; ++week) {
@@ -66,9 +67,10 @@ public:
                         delete currentSSID;
                         return;
                     }
-					SHA1_Init(&sha1);
-					SHA1_Update(&sha1, (const void *) input, 12);
-					SHA1_Final(message_digest, &sha1);
+                    EVP_DigestInit_ex(evp, EVP_sha1(), nullptr);
+                    EVP_DigestUpdate(evp, (const void *) input, 12);
+                    EVP_DigestFinal_ex(evp, message_digest, nullptr);
+                    EVP_MD_CTX_free(evp);
 					/*
 					 * We have to this because of little endianess
 					 */
@@ -78,7 +80,7 @@ public:
 					memcpy(((uint8_t *) currentSSID) + 2, message_digest + 17, 1);
 
 					if ((*currentSSID) == ssid) {
-						sprintf(key, "%02X%02X%02X%02X%02X", message_digest[0],
+						snprintf(key, sizeof(key), "%02X%02X%02X%02X%02X", message_digest[0],
 								message_digest[1], message_digest[2],
 								message_digest[3], message_digest[4]);
 						mutex->lock();

@@ -7,12 +7,12 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * Router Keygen is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with Router Keygen.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,8 +41,8 @@ QVector<QString> & PirelliKeygen::getKeys() {
 	if (!status)
 		throw ERROR;
 	hash->reset();
-	hash->addData(macBytes, 6);
-    hash->addData((const char *)saltMD5, 20);
+	hash->addData(QByteArrayView(macBytes, 6));
+    hash->addData(QByteArrayView((const char *)saltMD5, 20));
 	QByteArray resultHash = hash->result();
 	char key[5];
 	/*Grouping in five groups fo five bits*/

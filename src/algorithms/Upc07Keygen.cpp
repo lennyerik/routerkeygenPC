@@ -22,7 +22,7 @@
 #include "Upc07Keygen.h"
 #include <QRegularExpression>
 #include <stdio.h>
-#include <openssl/md5.h>
+#include <openssl/evp.h>
 
 Upc07Keygen::Upc07Keygen(QString ssid, QString mac) :
 		Keygen(ssid, mac) {
@@ -108,7 +108,8 @@ QVector<QString> & Upc07Keygen::getKeys() {
 
     const unsigned int prefix_cnt = sizeof(prefixes) / sizeof(prefixes[0]);
 
-    MD5_CTX ctx;
+    EVP_MD_CTX *evp = EVP_MD_CTX_new();
+    if (!evp) throw ERROR;
 
     for (buf[0] = 0; buf[0] <= max0; buf[0]++)
     for (buf[1] = 0; buf[1] <= max1; buf[1]++)
@@ -126,7 +127,7 @@ QVector<QString> & Upc07Keygen::getKeys() {
         }
 
         for(j = 0; j < prefix_cnt; j++) {
-            sprintf(serial, "%s%d%02d%d%04d", prefixes[j], buf[0], buf[1], buf[2], buf[3]);
+            snprintf(serial, sizeof(serial), "%s%d%02d%d%04d", prefixes[j], buf[0], buf[1], buf[2], buf[3]);
             memset(serial_input, 0, 64);
 
             if (mode == 2) {
@@ -137,9 +138,9 @@ QVector<QString> & Upc07Keygen::getKeys() {
                 memcpy(serial_input, serial, strlen(serial));
             }
 
-            MD5_Init(&ctx);
-            MD5_Update(&ctx, serial_input, strlen(serial_input));
-            MD5_Final(h1, &ctx);
+            EVP_DigestInit_ex(evp, EVP_md5(), nullptr);
+            EVP_DigestUpdate(evp, serial_input, strlen(serial_input));
+            EVP_DigestFinal_ex(evp, h1, nullptr);
 
             for (i = 0; i < 4; i++) {
                 hv[i] = *(quint16 *)(h1 + i*2);
@@ -153,11 +154,12 @@ QVector<QString> & Upc07Keygen::getKeys() {
 
             w2 = mangle(hv);
 
-            sprintf(tmpstr, "%08X%08X", w1, w2);
+            snprintf(tmpstr, sizeof(tmpstr), "%08X%08X", w1, w2);
 
-            MD5_Init(&ctx);
-            MD5_Update(&ctx, tmpstr, strlen(tmpstr));
-            MD5_Final(h2, &ctx);
+            EVP_DigestInit_ex(evp, EVP_md5(), nullptr);
+            EVP_DigestUpdate(evp, tmpstr, strlen(tmpstr));
+            EVP_DigestFinal_ex(evp, h2, nullptr);
+            EVP_MD_CTX_free(evp);
 
             results.append(hash2pass(h2));
         }

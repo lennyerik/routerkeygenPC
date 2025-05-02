@@ -6,7 +6,7 @@
  */
 
 #include "PBSKeygen.h"
-#include <openssl/sha.h>
+#include <openssl/evp.h>
 
 PBSKeygen::PBSKeygen(QString ssid, QString mac) :
 		Keygen(ssid, mac) {
@@ -21,7 +21,8 @@ const unsigned char PBSKeygen::saltSHA256[/*32*/] = { 0x54, 0x45, 0x4F, 0x74, 0x
 		0xDC, 0xE8 };
 
 QVector<QString> & PBSKeygen::getKeys() {
-    SHA256_CTX sha;
+    EVP_MD_CTX *evp = EVP_MD_CTX_new();
+    if (!evp) throw ERROR;
 
 	QString macS = getMacAddress();
 	if (macS.length() != 12) {
@@ -38,10 +39,11 @@ QVector<QString> & PBSKeygen::getKeys() {
     mac[5] -= 5;
 
     unsigned char hash[32];
-    SHA256_Init(&sha);
-    SHA256_Update(&sha, (const void *) saltSHA256, sizeof(saltSHA256));
-    SHA256_Update(&sha, (const void *) mac, sizeof(mac));
-    SHA256_Final(hash, &sha);
+    EVP_DigestInit_ex(evp, EVP_sha256(), nullptr);
+    EVP_DigestUpdate(evp, (const void *) saltSHA256, sizeof(saltSHA256));
+    EVP_DigestUpdate(evp, (const void *) mac, sizeof(mac));
+    EVP_DigestFinal_ex(evp, hash, nullptr);
+    EVP_MD_CTX_free(evp);
 	QString key = "";
 	for (int i = 0; i < 13; ++i) {
 		key.append(lookup.at(hash[i] % lookup.length()));
@@ -49,4 +51,3 @@ QVector<QString> & PBSKeygen::getKeys() {
 	results.append(key);
 	return results;
 }
-

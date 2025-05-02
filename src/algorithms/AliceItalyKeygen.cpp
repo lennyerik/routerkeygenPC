@@ -104,6 +104,7 @@ QVector<QString> & AliceItalyKeygen::getKeys() {
         EVP_DigestUpdate(evp, (const void *) serialStr.toLatin1().data(), serialStr.size());
         EVP_DigestUpdate(evp, (const void *) mac, sizeof(mac));
         EVP_DigestFinal_ex(evp, hash, nullptr);
+        EVP_MD_CTX_free(evp);
 
 		key = "";
 		for (int i = 0; i < 24; ++i)
