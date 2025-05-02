@@ -159,7 +159,6 @@ QVector<QString> & Upc07Keygen::getKeys() {
             EVP_DigestInit_ex(evp, EVP_md5(), nullptr);
             EVP_DigestUpdate(evp, tmpstr, strlen(tmpstr));
             EVP_DigestFinal_ex(evp, h2, nullptr);
-            EVP_MD_CTX_free(evp);
 
             results.append(hash2pass(h2));
         }

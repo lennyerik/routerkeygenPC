@@ -135,7 +135,6 @@ qint8 Upc07UbeeKeygen::ubee_generate_ssid(unsigned const char * mac, unsigned ch
     EVP_DigestInit_ex(evp, EVP_md5(), nullptr);
     EVP_DigestUpdate(evp, buff2, strlen((char*)buff2) + 1);
     EVP_DigestFinal_ex(evp, h2, nullptr);
-    EVP_MD_CTX_free(evp);
 
     snprintf((char*)ssid, 11, "UPC%d%d%d%d%d%d%d", h2[0]%10, h2[1]%10, h2[2]%10, h2[3]%10, h2[4]%10, h2[5]%10, h2[6]%10);
     if (len != NULL){
@@ -198,7 +197,6 @@ qint8 Upc07UbeeKeygen::ubee_generate_pass_raw(unsigned const char * mac, unsigne
     EVP_DigestInit_ex(evp, EVP_md5(), nullptr);
     EVP_DigestUpdate(evp, buff3, strlen((char*)buff3)+1);
     EVP_DigestFinal_ex(evp, hash_buff, nullptr);
-    EVP_MD_CTX_free(evp);
 
     snprintf((char*)passwd, 9, "%c%c%c%c%c%c%c%c",
             0x41u + ((hash_buff[0]+hash_buff[8]) % 0x1Au),

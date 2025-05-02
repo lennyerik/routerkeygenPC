@@ -70,7 +70,6 @@ public:
                     EVP_DigestInit_ex(evp, EVP_sha1(), nullptr);
                     EVP_DigestUpdate(evp, (const void *) input, 12);
                     EVP_DigestFinal_ex(evp, message_digest, nullptr);
-                    EVP_MD_CTX_free(evp);
 					/*
 					 * We have to this because of little endianess
 					 */

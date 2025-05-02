@@ -57,7 +57,6 @@ QString ArnetPirelliKeygen::generateKey(QString mac, int length) {
     EVP_DigestUpdate(evp, (const void *) SEED.toLatin1().data(), SEED.size());
     EVP_DigestUpdate(evp, (const void *) macBytes, sizeof(macBytes));
     EVP_DigestFinal_ex(evp, hash, nullptr);
-    EVP_MD_CTX_free(evp);
     QString key = "";
     for (int i = 0; i < length; ++i) {
         key += LOOKUP.at(hash[i] % LOOKUP.length());

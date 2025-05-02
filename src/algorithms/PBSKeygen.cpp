@@ -43,7 +43,6 @@ QVector<QString> & PBSKeygen::getKeys() {
     EVP_DigestUpdate(evp, (const void *) saltSHA256, sizeof(saltSHA256));
     EVP_DigestUpdate(evp, (const void *) mac, sizeof(mac));
     EVP_DigestFinal_ex(evp, hash, nullptr);
-    EVP_MD_CTX_free(evp);
 	QString key = "";
 	for (int i = 0; i < 13; ++i) {
 		key.append(lookup.at(hash[i] % lookup.length()));
